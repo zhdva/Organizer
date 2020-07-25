@@ -40,6 +40,7 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //локализакия окна загрузки файла
         UIManager.put("FileChooser.openButtonText", "Открыть");
         UIManager.put("FileChooser.directoryOpenButtonText", "Открыть");
         UIManager.put("FileChooser.cancelButtonText", "Отмена");
@@ -47,6 +48,7 @@ public class Main {
         UIManager.put("FileChooser.filesOfTypeLabelText", "Типы файлов");
         UIManager.put("FileChooser.lookInLabelText", "Директория");
 
+        //запуск GUI
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createGUI();
@@ -54,6 +56,7 @@ public class Main {
         });
     }
 
+    //создание GUI
     private static void createGUI() {
 
         frame = new JFrame("Органайзер");
@@ -62,8 +65,8 @@ public class Main {
         JPanel jp = new JPanel();
         frame.add(jp);
 
-        setComponents();
-        setGroupLayout(jp);
+        setComponents(); //инициализация компонентов
+        setGroupLayout(jp); //компоновка компонентов
 
         frame.setResizable(false);
 
@@ -72,6 +75,7 @@ public class Main {
 
     }
 
+    //инициализация компонентов
     private static void setComponents() {
 
         tasks = new String[3];
@@ -80,12 +84,12 @@ public class Main {
         tasks[2] = task2;
         inactive = new Color(220, 220, 220);
 
-        setTextAreas();
-        setSaveButton();
-        setOpenButton();
-        setCalculateButton();
-        setComboBox();
-        setInfoButton();
+        setTextAreas(); //инициализация текстовых полей
+        setSaveButton(); //инициализация кнопки "Сохранить"
+        setOpenButton(); //инициализация кнопки "Загрузить"
+        setCalculateButton(); //инициализация кнопки "Посчитать"
+        setComboBox(); //инициализация поля выбора задач
+        setInfoButton(); //инициализация кнопки "Справка"
 
     }
 
@@ -97,6 +101,8 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
 
                 String filePath;
+
+                //сохранение файла в зависимости от выбранной задачи
                 switch (comboBox.getSelectedItem().toString()) {
 
                     case task1:
@@ -125,6 +131,7 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                //инициализация окна загрузки файла
                 fileChooser = new JFileChooser(FileSaverAndOpener.getPath());
                 fileChooser.setDialogTitle("Загрузить файл");
                 int result = fileChooser.showOpenDialog(frame);
@@ -135,10 +142,11 @@ public class Main {
                     Map<String, String> map = FileSaverAndOpener.open(file);
 
                     if (map.containsKey("Exception")) {
-                        resultArea.setText(map.get("Exception"));
+                        resultArea.setText(map.get("Exception")); //вывод ошибки
                         return;
                     }
 
+                    //заполнение полей в зависимости от задачи
                     switch (map.get(task)) {
 
                         case task1:
@@ -179,6 +187,7 @@ public class Main {
 
     }
 
+    //метод для вывода результата
     private static void calculate() {
 
         StringBuilder result;
@@ -211,12 +220,14 @@ public class Main {
         infoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //вызов окна справки
                 JOptionPane.showMessageDialog(frame, getInfo(), "Справка", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
     }
 
+    //считывание текста из файла info.txt
     private static String getInfo() {
 
         StringBuilder result = new StringBuilder("");
@@ -240,9 +251,11 @@ public class Main {
 
     }
 
+    //инициализация и конфигурация поля выбора задач
     private static void setComboBox() {
 
         comboBox = new JComboBox<String>(tasks) {
+            //установка подсказки, если задача не выбрана
             @Override
             protected void paintComponent(java.awt.Graphics g) {
                 super.paintComponent(g);
@@ -257,6 +270,7 @@ public class Main {
         };
         comboBox.addItemListener(new ItemListener() {
 
+            //изменение структуры окна в зависимости от выбранной задачи
             @Override
             public void itemStateChanged(ItemEvent e) {
 
@@ -273,6 +287,7 @@ public class Main {
                         ta2.setBackground(Color.WHITE);
 
                         if (ta1.getKeyListeners().length != 0) {
+                            //удаление валидатора
                             ta1.removeKeyListener(ta1.getKeyListeners()[0]);
                         }
 
@@ -287,6 +302,7 @@ public class Main {
                         ta1.setBackground(Color.WHITE);
                         ta2.setBackground(inactive);
 
+                        //установка валидатора ввода цифр
                         ta1.addKeyListener(new KeyAdapter() {
                             public void keyTyped(KeyEvent e) {
                                 char c = e.getKeyChar();
@@ -313,9 +329,11 @@ public class Main {
 
     }
 
+    //инициализация и конфигурация текстовых полей
     private static void setTextAreas() {
 
         ta1 = new JTextArea() {
+            //установка подсказки в зависимости от выбранной задачи
             @Override
             protected void paintComponent(java.awt.Graphics g) {
                 super.paintComponent(g);
@@ -338,6 +356,7 @@ public class Main {
         };
 
         ta2 = new JTextArea() {
+            //установка подсказки
             @Override
             protected void paintComponent(java.awt.Graphics g) {
                 super.paintComponent(g);
@@ -380,6 +399,7 @@ public class Main {
 
     }
 
+    //конфигурация расположения компонентов
     private static void setGroupLayout(final JPanel jp) {
 
         GroupLayout layout = new GroupLayout(jp);
@@ -387,9 +407,10 @@ public class Main {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        layout.linkSize(saveButton, openButton, calculateButton);
-        layout.linkSize(scrollTextArea1, scrollTextArea2);
+        layout.linkSize(saveButton, openButton, calculateButton); //одинаковый размер кнопок
+        layout.linkSize(scrollTextArea1, scrollTextArea2); //одинаковый размер текстовых полей
 
+        //горизонтальная компоновка
         layout.setHorizontalGroup(layout.createParallelGroup()
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(comboBox)
@@ -405,6 +426,7 @@ public class Main {
                 .addComponent(scrollResultArea)
         );
 
+        //вертикальная компоновка
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(BASELINE)
                         .addComponent(comboBox)
