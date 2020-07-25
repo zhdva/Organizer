@@ -9,9 +9,11 @@ public class Expander {
 
         for (int i = 0; i < num.length(); i++) {
             if (!zero.equals(num.charAt(i))) {
-                int n = Character.digit(num.charAt(i), 10) * (int)Math.pow(10, num.length() - i - 1);
                 if (result.length() != 0) result.append(" + ");
-                result.append(n);
+                result.append(num.charAt(i));
+                for (int j = 1; j < num.length() - i; j++) {
+                    result.append(zero);
+                }
             }
         }
 
