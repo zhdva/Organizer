@@ -1,9 +1,10 @@
 package org.zhadaev.organizer;
 
+import java.awt.*;
 import java.awt.event.*;
-import java.awt.Color;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import javax.swing.*;
@@ -23,7 +24,7 @@ public class Main {
     private static JButton openButton;
     private static JButton calculateButton;
     private static JScrollPane scrollResultArea;
-    private static JTextArea resultArea;
+    private static JTextPane resultArea;
     private static JFileChooser fileChooser;
     private static String[] tasks;
 
@@ -32,12 +33,20 @@ public class Main {
 
     private static final String task = "task";
     private static final String number = "number";
-    private static final String a1 = "a1";
-    private static final String a2 = "a2";
+    private static final String a1 = "array1";
+    private static final String a2 = "array2";
 
     private static Color inactive;
 
     public static void main(String[] args) {
+
+        UIManager.put("FileChooser.openButtonText", "Открыть");
+        UIManager.put("FileChooser.directoryOpenButtonText", "Открыть");
+        UIManager.put("FileChooser.cancelButtonText", "Отмена");
+        UIManager.put("FileChooser.fileNameLabelText", "Наименование файла");
+        UIManager.put("FileChooser.filesOfTypeLabelText", "Типы файлов");
+        UIManager.put("FileChooser.lookInLabelText", "Директория");
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createGUI();
@@ -65,9 +74,10 @@ public class Main {
 
     private static void setComponents() {
 
-        tasks = new String[2];
-        tasks[0] = task1;
-        tasks[1] = task2;
+        tasks = new String[3];
+        tasks[0] = "";
+        tasks[1] = task1;
+        tasks[2] = task2;
         inactive = new Color(220, 220, 220);
 
         setTextAreas();
@@ -102,8 +112,6 @@ public class Main {
                         resultArea.setText("Сохранён файл" + filePath);
                         break;
 
-                    default:
-                        resultArea.setText("Файл не сохранён");
                 }
             }
         });
@@ -117,7 +125,7 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                fileChooser = new JFileChooser();
+                fileChooser = new JFileChooser(FileSaverAndOpener.getPath());
                 fileChooser.setDialogTitle("Загрузить файл");
                 int result = fileChooser.showOpenDialog(frame);
 
@@ -200,15 +208,59 @@ public class Main {
     private static void setInfoButton() {
 
         infoButton = new JButton("?");
+        infoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, getInfo(), "Справка", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+    }
+
+    private static String getInfo() {
+
+        StringBuilder result = new StringBuilder("");
+
+        File file = new File(Main.class.getClassLoader().getResource("info.txt").getFile());
+
+        try {
+
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                result.append(line);
+            }
+            scanner.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return result.toString();
 
     }
 
     private static void setComboBox() {
 
-        comboBox = new JComboBox<>(tasks);
+        comboBox = new JComboBox<String>(tasks) {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                if (comboBox.getSelectedItem().toString().equals("")) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setBackground(Color.BLACK);
+                    g2.setColor(Color.gray);
+                    g2.drawString("Выберите задачу...", 7, 14);
+                    g2.dispose();
+                }
+            }
+        };
         comboBox.addItemListener(new ItemListener() {
+
             @Override
             public void itemStateChanged(ItemEvent e) {
+
+                if (e.getStateChange() == ItemEvent.DESELECTED) return;
 
                 switch (e.getItem().toString()) {
 
@@ -219,6 +271,11 @@ public class Main {
                         ta2.setText("");
                         ta1.setBackground(Color.WHITE);
                         ta2.setBackground(Color.WHITE);
+
+                        if (ta1.getKeyListeners().length != 0) {
+                            ta1.removeKeyListener(ta1.getKeyListeners()[0]);
+                        }
+
                         resultArea.setText("Введите слова через пробел в верхнее и нижнее поля");
                         break;
 
@@ -229,6 +286,16 @@ public class Main {
                         ta2.setText("");
                         ta1.setBackground(Color.WHITE);
                         ta2.setBackground(inactive);
+
+                        ta1.addKeyListener(new KeyAdapter() {
+                            public void keyTyped(KeyEvent e) {
+                                char c = e.getKeyChar();
+                                if (((c < '0') || (c > '9'))) {
+                                    e.consume();
+                                }
+                            }
+                        });
+
                         resultArea.setText("Введите число");
                         break;
 
@@ -248,20 +315,58 @@ public class Main {
 
     private static void setTextAreas() {
 
-        ta1 = new JTextArea();
-        ta2 = new JTextArea();
-        resultArea = new JTextArea();
+        ta1 = new JTextArea() {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                if (getText().isEmpty()) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setBackground(Color.BLACK);
+                    g2.setColor(Color.gray);
+                    switch (comboBox.getSelectedItem().toString()) {
+                        case task1:
+                            g2.drawString("Введите слова...", 7, 14);
+                            g2.dispose();
+                            break;
+                        case task2:
+                            g2.drawString("Введите число...", 7, 14);
+                            g2.dispose();
+                            break;
+                    }
+                }
+            }
+        };
+
+        ta2 = new JTextArea() {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                if (getText().isEmpty()) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setBackground(Color.BLACK);
+                    g2.setColor(Color.gray);
+                    if (comboBox.getSelectedItem().toString().equals(task1)) {
+                            g2.drawString("Введите слова...", 7, 14);
+                            g2.dispose();
+                    }
+                }
+            }
+        };
+
         ta1.setEnabled(false);
         ta2.setEnabled(false);
-        resultArea.setEnabled(false);
         ta1.setLineWrap(true);
         ta2.setLineWrap(true);
-        resultArea.setLineWrap(true);
         ta1.setWrapStyleWord(true);
         ta2.setWrapStyleWord(true);
         ta1.setBackground(inactive);
         ta2.setBackground(inactive);
+
+        resultArea = new JTextPane();
         resultArea.setBackground(new Color(230, 230, 230));
+        resultArea.setText("Выберите задачу или загрузите файл");
+        resultArea.setEnabled(false);
+        resultArea.setDisabledTextColor(Color.BLACK);
 
         scrollTextArea1 = new JScrollPane(ta1,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -272,9 +377,6 @@ public class Main {
         scrollResultArea = new JScrollPane(resultArea,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        resultArea.setText("Выберите задачу или загрузите файл");
-
 
     }
 
