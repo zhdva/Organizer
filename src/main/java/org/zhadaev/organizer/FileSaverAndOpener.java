@@ -1,10 +1,6 @@
 package org.zhadaev.organizer;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
 
@@ -45,14 +41,11 @@ public class FileSaverAndOpener {
         Map<String, String> map = new HashMap<>();
         final String exception = "Exception";
 
-        FileReader fr = null;
+        FileReader fr;
         try {
             fr = new FileReader(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-
-        if (fr == null) {
             map.put(exception, "Файл не найден");
             return map;
         }
@@ -66,9 +59,11 @@ public class FileSaverAndOpener {
         while (scan.hasNextLine()) {
             line = scan.nextLine();
             index = line.indexOf("=");
-            key = line.substring(0, index);
-            value = line.substring(index + 1);
-            map.put(key, value);
+            if (index != -1) {
+                key = line.substring(0, index);
+                value = line.substring(index + 1);
+                map.put(key, value);
+            }
         }
 
         try {
@@ -77,8 +72,7 @@ public class FileSaverAndOpener {
             e.printStackTrace();
         }
 
-
-        if (!map.containsKey("task") || !(map.containsKey("number") || map.containsKey("a1") && map.containsKey("a2"))) {
+        if (!map.containsKey("task") || !(map.containsKey("number") || map.containsKey("array1") && map.containsKey("array2"))) {
             map.put(exception, "Неверная структура файла");
         }
 
@@ -86,7 +80,7 @@ public class FileSaverAndOpener {
 
     }
 
-    private static String getPath() {
+    protected static String getPath() {
         File file = null;
         try {
             file = new File(FileSaverAndOpener.class.getProtectionDomain().getCodeSource().getLocation().toURI());
