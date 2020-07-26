@@ -3,8 +3,7 @@ package org.zhadaev.organizer;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -71,6 +70,7 @@ public class Main {
         frame.setResizable(false);
 
         frame.pack();
+        frame.setLocationRelativeTo(null); //расположение окна по центру экрана
         frame.setVisible(true);
 
     }
@@ -232,20 +232,14 @@ public class Main {
 
         StringBuilder result = new StringBuilder("");
 
-        File file = new File(Main.class.getClassLoader().getResource("info.txt").getFile());
+        InputStream in = Main.class.getResourceAsStream("/info.txt");
 
-        try {
-
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                result.append(line);
-            }
-            scanner.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Scanner scanner = new Scanner(in);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            result.append(line);
         }
+        scanner.close();
 
         return result.toString();
 
