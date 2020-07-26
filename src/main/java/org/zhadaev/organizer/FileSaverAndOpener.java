@@ -2,6 +2,7 @@ package org.zhadaev.organizer;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class FileSaverAndOpener {
@@ -28,7 +29,9 @@ public class FileSaverAndOpener {
     //сохранение файла
     private static String save() {
         FileWriter writer;
-        String filePath = getPath() + task + " " + new Date() + ".txt";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH-mm-ss");
+        String date = sdf.format(new Date());
+        String filePath = getPath() + task + " " + date + ".txt";
         try {
             writer = new FileWriter(filePath, false);
             writer.write(text);
@@ -93,6 +96,7 @@ public class FileSaverAndOpener {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+        assert file != null;
         String path = file.getPath();
         String fileName = file.getName();
         return path.substring(0, path.length() - fileName.length());
