@@ -48,11 +48,7 @@ public class Main {
         UIManager.put("FileChooser.lookInLabelText", "Директория");
 
         //запуск GUI
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createGUI();
-            }
-        });
+        SwingUtilities.invokeLater(Main::createGUI);
     }
 
     //создание GUI
@@ -96,29 +92,26 @@ public class Main {
     private static void setSaveButton() {
 
         saveButton = new JButton("Сохранить");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        saveButton.addActionListener(e -> {
 
-                String filePath;
+            String filePath;
 
-                //сохранение файла в зависимости от выбранной задачи
-                switch (comboBox.getSelectedItem().toString()) {
+            //сохранение файла в зависимости от выбранной задачи
+            switch (comboBox.getSelectedItem().toString()) {
 
-                    case task1:
-                        filePath = FileSaverAndOpener.save(comboBox.getSelectedItem().toString(),
-                                                            ta1.getText(),
-                                                            ta2.getText());
-                        resultArea.setText("Сохранён файл" + filePath);
-                        break;
+                case task1:
+                    filePath = FileSaverAndOpener.save(comboBox.getSelectedItem().toString(),
+                                                        ta1.getText(),
+                                                        ta2.getText());
+                    resultArea.setText("Сохранён файл" + filePath);
+                    break;
 
-                    case task2:
-                        filePath = FileSaverAndOpener.save(comboBox.getSelectedItem().toString(),
-                                                            ta1.getText());
-                        resultArea.setText("Сохранён файл" + filePath);
-                        break;
+                case task2:
+                    filePath = FileSaverAndOpener.save(comboBox.getSelectedItem().toString(),
+                                                        ta1.getText());
+                    resultArea.setText("Сохранён файл" + filePath);
+                    break;
 
-                }
             }
         });
 
@@ -127,49 +120,46 @@ public class Main {
     private static void setOpenButton() {
 
         openButton = new JButton("Загрузить");
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        openButton.addActionListener(e -> {
 
-                //инициализация окна загрузки файла
-                fileChooser = new JFileChooser(FileSaverAndOpener.getPath());
-                fileChooser.setDialogTitle("Загрузить файл");
-                int result = fileChooser.showOpenDialog(frame);
+            //инициализация окна загрузки файла
+            fileChooser = new JFileChooser(FileSaverAndOpener.getPath());
+            fileChooser.setDialogTitle("Загрузить файл");
+            int result = fileChooser.showOpenDialog(frame);
 
-                if (result == JFileChooser.APPROVE_OPTION) {
+            if (result == JFileChooser.APPROVE_OPTION) {
 
-                    File file = fileChooser.getSelectedFile();
-                    Map<String, String> map = FileSaverAndOpener.open(file);
+                File file = fileChooser.getSelectedFile();
+                Map<String, String> map = FileSaverAndOpener.open(file);
 
-                    if (map.containsKey("Exception")) {
-                        resultArea.setText(map.get("Exception")); //вывод ошибки
-                        return;
-                    }
-
-                    //заполнение полей в зависимости от задачи
-                    switch (map.get(task)) {
-
-                        case task1:
-                            comboBox.setSelectedItem(task1);
-                            ta1.setText(map.get(a1));
-                            ta2.setText(map.get(a2));
-                            calculate();
-                            break;
-
-                        case task2:
-                            comboBox.setSelectedItem(task2);
-                            ta1.setText(map.get(number));
-                            calculate();
-                            break;
-
-                        default:
-                            resultArea.setText("");
-
-                    }
-
-                } else {
-                    resultArea.setText("Файл не загружен");
+                if (map.containsKey("Exception")) {
+                    resultArea.setText(map.get("Exception")); //вывод ошибки
+                    return;
                 }
+
+                //заполнение полей в зависимости от задачи
+                switch (map.get(task)) {
+
+                    case task1:
+                        comboBox.setSelectedItem(task1);
+                        ta1.setText(map.get(a1));
+                        ta2.setText(map.get(a2));
+                        calculate();
+                        break;
+
+                    case task2:
+                        comboBox.setSelectedItem(task2);
+                        ta1.setText(map.get(number));
+                        calculate();
+                        break;
+
+                    default:
+                        resultArea.setText("");
+
+                }
+
+            } else {
+                resultArea.setText("Файл не загружен");
             }
         });
 
@@ -178,12 +168,7 @@ public class Main {
     private static void setCalculateButton() {
 
         calculateButton = new JButton("Посчитать");
-        calculateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculate();
-            }
-        });
+        calculateButton.addActionListener(e -> calculate());
 
     }
 
@@ -217,12 +202,9 @@ public class Main {
     private static void setInfoButton() {
 
         infoButton = new JButton("?");
-        infoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //вызов окна справки
-                JOptionPane.showMessageDialog(frame, getInfo(), "Справка", JOptionPane.INFORMATION_MESSAGE);
-            }
+        infoButton.addActionListener(e -> {
+            //вызов окна справки
+            JOptionPane.showMessageDialog(frame, getInfo(), "Справка", JOptionPane.INFORMATION_MESSAGE);
         });
 
     }
@@ -230,7 +212,7 @@ public class Main {
     //считывание текста из файла info.txt
     private static String getInfo() {
 
-        StringBuilder result = new StringBuilder("");
+        StringBuilder result = new StringBuilder();
 
         InputStream in = Main.class.getResourceAsStream("/info.txt");
 
@@ -262,62 +244,58 @@ public class Main {
                 }
             }
         };
-        comboBox.addItemListener(new ItemListener() {
+        //изменение структуры окна в зависимости от выбранной задачи
+        comboBox.addItemListener(e -> {
 
-            //изменение структуры окна в зависимости от выбранной задачи
-            @Override
-            public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.DESELECTED) return;
 
-                if (e.getStateChange() == ItemEvent.DESELECTED) return;
+            switch (e.getItem().toString()) {
 
-                switch (e.getItem().toString()) {
+                case task1:
+                    ta1.setEnabled(true);
+                    ta2.setEnabled(true);
+                    ta1.setText("");
+                    ta2.setText("");
+                    ta1.setBackground(Color.WHITE);
+                    ta2.setBackground(Color.WHITE);
 
-                    case task1:
-                        ta1.setEnabled(true);
-                        ta2.setEnabled(true);
-                        ta1.setText("");
-                        ta2.setText("");
-                        ta1.setBackground(Color.WHITE);
-                        ta2.setBackground(Color.WHITE);
+                    if (ta1.getKeyListeners().length != 0) {
+                        //удаление валидатора
+                        ta1.removeKeyListener(ta1.getKeyListeners()[0]);
+                    }
 
-                        if (ta1.getKeyListeners().length != 0) {
-                            //удаление валидатора
-                            ta1.removeKeyListener(ta1.getKeyListeners()[0]);
-                        }
+                    resultArea.setText("Введите слова через пробел в верхнее и нижнее поля");
+                    break;
 
-                        resultArea.setText("Введите слова через пробел в верхнее и нижнее поля");
-                        break;
+                case task2:
+                    ta1.setEnabled(true);
+                    ta2.setEnabled(false);
+                    ta1.setText("");
+                    ta2.setText("");
+                    ta1.setBackground(Color.WHITE);
+                    ta2.setBackground(inactive);
 
-                    case task2:
-                        ta1.setEnabled(true);
-                        ta2.setEnabled(false);
-                        ta1.setText("");
-                        ta2.setText("");
-                        ta1.setBackground(Color.WHITE);
-                        ta2.setBackground(inactive);
-
-                        //установка валидатора ввода цифр
-                        ta1.addKeyListener(new KeyAdapter() {
-                            public void keyTyped(KeyEvent e) {
-                                char c = e.getKeyChar();
-                                if (((c < '0') || (c > '9'))) {
-                                    e.consume();
-                                }
+                    //установка валидатора ввода цифр
+                    ta1.addKeyListener(new KeyAdapter() {
+                        public void keyTyped(KeyEvent e) {
+                            char c = e.getKeyChar();
+                            if (((c < '0') || (c > '9'))) {
+                                e.consume();
                             }
-                        });
+                        }
+                    });
 
-                        resultArea.setText("Введите число");
-                        break;
+                    resultArea.setText("Введите число");
+                    break;
 
-                    default:
-                        ta1.setEnabled(false);
-                        ta2.setEnabled(false);
-                        ta1.setText("");
-                        ta2.setText("");
-                        ta1.setBackground(inactive);
-                        ta2.setBackground(inactive);
-                        resultArea.setText("Выберите задачу или загрузите файл");
-                }
+                default:
+                    ta1.setEnabled(false);
+                    ta2.setEnabled(false);
+                    ta1.setText("");
+                    ta2.setText("");
+                    ta1.setBackground(inactive);
+                    ta2.setBackground(inactive);
+                    resultArea.setText("Выберите задачу или загрузите файл");
             }
         });
 
