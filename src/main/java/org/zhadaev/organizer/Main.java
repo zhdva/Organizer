@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.swing.*;
@@ -215,8 +216,9 @@ public class Main {
         StringBuilder result = new StringBuilder();
 
         InputStream in = Main.class.getResourceAsStream("/info.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
-        Scanner scanner = new Scanner(in);
+        Scanner scanner = new Scanner(br);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             result.append(line);
