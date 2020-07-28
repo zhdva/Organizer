@@ -1,6 +1,6 @@
-package org.zhadaev.organizer;
+package org.zhadaev.organizer.service;
 
-public class Expander {
+public class ExpanderService {
 
     public static String expand(final String num) {
 

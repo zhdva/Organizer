@@ -1,8 +1,8 @@
-package org.zhadaev.organizer;
+package org.zhadaev.organizer.service;
 
 import java.util.*;
 
-public class Comparator {
+public class ComparatorService {
 
     public static String[] compare(final String[] a1, final String[] a2) {
 

@@ -1,11 +1,11 @@
-package org.zhadaev.organizer;
+package org.zhadaev.organizer.service;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class FileSaverAndOpener {
+public class FileService {
 
     private static String task;
     private static String text;
@@ -92,7 +92,7 @@ public class FileSaverAndOpener {
     protected static String getPath() {
         File file = null;
         try {
-            file = new File(FileSaverAndOpener.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            file = new File(FileService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
