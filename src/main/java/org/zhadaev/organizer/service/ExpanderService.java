@@ -1,8 +1,11 @@
 package org.zhadaev.organizer.service;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ExpanderService {
 
-    public static String expand(final String num) {
+    public String expand(final String num) {
 
         StringBuilder result = new StringBuilder();
         Character zero = '0';

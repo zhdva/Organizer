@@ -1,10 +1,13 @@
 package org.zhadaev.organizer.service;
 
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
+@Service
 public class ComparatorService {
 
-    public static String[] compare(final String[] a1, final String[] a2) {
+    public String[] compare(final String[] a1, final String[] a2) {
 
         SortedSet<String> sortedStrings = new TreeSet();
 
