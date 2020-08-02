@@ -34,5 +34,20 @@ function showFields() {
             document.getElementById('savebtn').disabled = true;
             document.getElementById('calculatebtn').disabled = true;
             document.getElementById('message').value = "Выберите задачу или загрузите файл";
-  }
+    }
 }
+
+function stopReloadKey(evt) {
+    var evt = (evt) ? evt : ((event) ? event : null);
+    var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+    if (evt.keyCode == 13)  {
+        return false;
+    }
+}
+
+document.onkeypress = stopReloadKey;
+document.getElementById('tasks-field').onkeypress = stopReloadKey;
+document.getElementById('array1').onkeypress = stopReloadKey;
+document.getElementById('array2').onkeypress = stopReloadKey;
+document.getElementById('number').onkeypress = stopReloadKey;
+document.getElementById('message').onkeypress = stopReloadKey;

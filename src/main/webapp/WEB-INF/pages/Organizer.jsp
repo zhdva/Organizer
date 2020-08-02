@@ -4,11 +4,11 @@
 <head>
     <title>Органайзер</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="${pageContext.request.contextPath}/res/style.css" rel="stylesheet" type="text/css"/>
+    <link href="res/style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body onload="fill()">
     <form ModelAttribute="form"  method="post" class="form" style="max-width: 600px">
-        <div class="container">
+
         <h1>Органайзер</h1>
         <hr>
 
@@ -36,9 +36,8 @@
 
         <textarea name="message" class="mess" id="message" readonly></textarea>
 
-        </div>
     </form>
-    <script src="${pageContext.request.contextPath}/res/script.js"></script>
+    <script src="res/script.js"></script>
     <script type="text/javascript">
         function fill() {
             document.getElementById('tasks-field').value = "${map.get('task')}";
